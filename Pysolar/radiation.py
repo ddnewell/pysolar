@@ -20,8 +20,7 @@
 """Calculate different kinds of radiation components via default values
 
 """
-#from . import solar
-import math
+import math, datetime
 
 def GetAirMassRatio(altitude_deg):
 	# from Masters, p. 412
@@ -40,10 +39,15 @@ def GetRadiationDirect(utc_datetime, altitude_deg):
 	# from Masters, p. 412
 	
 	if(altitude_deg > 0):
-		day = solar.GetDayOfYear(utc_datetime)
+		day = GetDayOfYear(utc_datetime)
 		flux = GetApparentExtraterrestrialFlux(day)
 		optical_depth = GetOpticalDepth(day)
 		air_mass_ratio = GetAirMassRatio(altitude_deg)
 		return flux * math.exp(-1 * optical_depth * air_mass_ratio)
 	else:
 		return 0.0
+
+def GetDayOfYear(utc_datetime):
+	year_start = datetime.datetime(utc_datetime.year, 1, 1, tzinfo=utc_datetime.tzinfo)
+	delta = (utc_datetime - year_start)
+	return delta.days
